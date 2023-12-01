@@ -1,0 +1,10 @@
+# executables
+main
+
+# input files
+*.txt
+
+# script containing sensitive info
+start
+
+.vscode/
