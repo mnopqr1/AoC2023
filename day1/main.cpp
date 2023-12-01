@@ -7,24 +7,13 @@
 
 using namespace std;
 
-const unordered_map<string, int> digitMap = {
-    {"zero", 0},
-    {"one", 1},
-    {"two", 2},
-    {"three", 3},
-    {"four", 4},
-    {"five", 5},
-    {"six", 6},
-    {"seven",7},
-    {"eight", 8},
-    {"nine", 9}
-};
+const string digits[10] = {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
 
 /* Returns the digit whose name is found in str when starting to read from pos, or -1 if 
    there is none. */
 int digitname(const string str, size_t pos) {
-    for (const auto& pair : digitMap) {
-            if (str.substr(pos, pair.first.length()) == pair.first) return pair.second;
+    for (int d = 0; d < 10; d++) {
+            if (str.substr(pos, digits[d].length()) == digits[d]) return d;
         }
     return -1;
 }

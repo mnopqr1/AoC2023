@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+## go to input page in browser, hit reload, view request's header for the input file to get this
+
+
+Y="2023" # year
+D=$1    # day
+
+while IFS= read -r line
+do  
+    curl "https://adventofcode.com/${Y}/day/${D}/input" -H "cookie: session=$line" -o "input.txt"
+
+done < "cookiekey.txt"

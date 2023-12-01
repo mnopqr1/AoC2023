@@ -5,6 +5,5 @@ main
 *.txt
 
 # script containing sensitive info
-start
 
 .vscode/

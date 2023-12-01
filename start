@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+## go to input page in browser, hit reload, view request's header for the input file to get this
+
+Y="2023" # year
+D=$1    # day
+DIR="day${D}"
+NAME="${DIR}.cpp"
+if [ -d "${DIR}" ]; then
+    printf "Directory already exists!"
+    exit
+fi
+
+#dune init project ${DIR}
+#cd ${DIR}
+#dune build
+#cp ../templates/Makefile .
+#mkdir vendor
+#cd vendor
+#ln -s ../../aocutils aocutils
+#cd ..
+mkdir -p ${DIR}
+cd ${DIR}
+touch ${NAME}
+../getinput {$D}
+cd ..
+code .
+google-chrome https://adventofcode.com/${Y}/day/${D}
