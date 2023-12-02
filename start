@@ -15,8 +15,8 @@ fi
 mkdir -p ${DIR}
 cd ${DIR}
 touch ${NAME}
-../getinput {$D}
 cd ..
+./getinput ${D}
 code .
 google-chrome https://adventofcode.com/${Y}/day/${D}
 
