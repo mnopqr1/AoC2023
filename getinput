@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-## go to input page in browser, hit reload, view request's header for the input file to get this
+## assumes a file cookiekey.txt in the same directory containing the session key.
+## to find this, go to input page in browser, hit reload, view request's header for the 
+## input file.
 
 
 Y="2023" # year
