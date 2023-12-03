@@ -1,3 +1,5 @@
+from itertools import product
+
 def issymbol(x):
     return x != '.' and not x.isdigit()
 
@@ -19,27 +21,22 @@ def parse(ls):
             else:
                 j += 1
         i += 1
-    return g
+    return g, L
 
-def has_symbol_around(ls, i, j):
-    L = len(ls)
-    neighbors = [(i+di,j+dj) for di in [-1,0,1] for dj in [-1,0,1] 
-                 if (di!=0 or dj!=0) and (0 <= i + di < L) and (0 <= j + dj < L)]
-    for (x,y) in neighbors:
-        if issymbol(ls[x][y]):
-            return True
-    # print(f"No symbol around found at ({i},{j})")
+def has_symbol_around(ls, L, i, j):
+    for di, dj in product([-1,0,1], [-1,0,1]):
+        if (di,dj) != (0,0) and (0 <= i + di < L) and (0 <= j + dj < L):
+            if issymbol(ls[i+di][j+dj]):
+                return True
     return False
 
-def solve1(ls):
+def solve1(ls,g,L):
     s = 0
-    L = len(ls)
-    g = parse(ls)
     i = 0
     while i < L:
         j = 0
         while j < L:
-            if g[i][j] != 0 and has_symbol_around(ls, i, j):
+            if g[i][j] != 0 and has_symbol_around(ls, L, i, j):
                 s += g[i][j]
                 while ls[i][j].isdigit():
                     j += 1
@@ -48,45 +45,41 @@ def solve1(ls):
         i += 1
     return s
 
-def numbers_around(g, i, j):
+def numbers_around(g, L, i, j):
     ns = []
-    for di in [-1,0,1]:
-        for dj in [-1,0,1]:
-            if (di != 0 or dj != 0) and (0 <= i + di < len(g)) and (0 <= j + dj < len(g)):
-                if g[i+di][j+dj] != 0:
-                    if g[i+di][j+dj] not in ns:
-                        ns.append(g[i+di][j+dj])
+    for di, dj in product([-1,0,1], [-1,0,1]):
+        if (di,dj) != (0,0) and (0 <= i + di < L) and (0 <= j + dj < L):
+        # NB: this only works because we never have the same number around * in two different spots
+            if g[i+di][j+dj] != 0 and g[i+di][j+dj] not in ns:
+                ns.append(g[i+di][j+dj])
     return ns
 
-def solve2(ls):
+def solve2(ls,g,L):
     s = 0
-    L = len(ls)
-    g = parse(ls)
-    for i in range(L):
-        for j in range(L):
-            if ls[i][j] == "*":
-                ns = numbers_around(g, i,j)
-                if len(ns) == 2:
-                    s += ns[0] * ns[1]
+    for i, j in product(range(L),range(L)):
+        if ls[i][j] == "*":
+            ns = numbers_around(g, L, i, j)
+            if len(ns) == 2:
+                s += ns[0] * ns[1]
     return s
-    
-def solve(filename, part, expected=None):
+
+def solve(filename, expected=None):
     with open(filename) as f:
         ls = f.readlines()
 
-    if part == 1:    
-        s = solve1(ls)
-    if part == 2:
-        s = solve2(ls)
+    g, L = parse(ls)
+    s = [solve1(ls, g, L), solve2(ls, g, L)]
 
-    if expected is not None:
-        assert s == expected, f"File {filename}, part {part}, found {s}, expected {expected}"
-    else:
-        print(f"File {filename}, part {part}, answer: {s}")
-    
+    for p, x in enumerate(s):
+        print(f"File {filename}, part {p+1}, answer: {x}", end="")
+        if expected is not None:
+            print(f", expected answer: {expected[p]}, ", end="")
+            if expected[p] == x: print("CORRECT")
+            else: print("WRONG")
+        else:
+            print()
+
 
 if __name__ == "__main__":
-    solve("./day3/test.txt", 1, 4361)
-    solve("./day3/test.txt", 2, 467835)
-    solve("./day3/input.txt", 1)
-    solve("./day3/input.txt", 2)
+    solve("test.txt", [4361,467835])
+    solve("input.txt")
