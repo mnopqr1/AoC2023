@@ -13,3 +13,8 @@ Instead of trying to figure it out directly, I first wrote the code in Python
 and then asked Copilot to help me translate it in C++. Is that a good way to
 learn?
 
+## Day 3
+Today went alright except for the fact that after writing the function for part
+2 I forgot to change the main so that it actually calls part 2 so I kept
+getting the wrong answer...
+Oh and I did it in Python, I guess I'm already giving up on C++...
