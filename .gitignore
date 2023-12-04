@@ -4,6 +4,5 @@ main
 # input files
 *.txt
 
-# script containing sensitive info
-
 .vscode/
+__pycache__/

@@ -3,7 +3,7 @@
 Y="2023" # year
 D=$1    # day
 DIR="day${D}"
-NAME="${DIR}.cpp"
+NAME="${DIR}.py"
 if [ -d "${DIR}" ]; then
     printf "Directory already exists!"
     google-chrome https://adventofcode.com/${Y}/day/${D}
@@ -12,7 +12,8 @@ fi
 
 mkdir -p ${DIR}
 cd ${DIR}
-touch ${NAME}
+cp ../template.py ${NAME}
+ln -s ../utils.py utils.py
 cd ..
 ./getinput ${D}
 code .
