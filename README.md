@@ -18,3 +18,8 @@ Today went alright except for the fact that after writing the function for part
 2 I forgot to change the main so that it actually calls part 2 so I kept
 getting the wrong answer...
 Oh and I did it in Python, I guess I'm already giving up on C++...
+
+## Day 4
+My fastest day so far, by far! I was blocked once because I tried to re-use the function I wrote for part 1 in part 2 but forgot that that function does not give me the number I want but 2^ the number I want. 
+And also I re-learned today that `sum(d)` when `d` is a dict gives you the sum of the dictionary keys, not the values! 
+
