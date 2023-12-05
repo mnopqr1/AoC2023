@@ -23,12 +23,10 @@ def intersect(s1, l1, s2, l2):
 
 def minus(s1,l1,s2,l2):
     if s1 + l1 <= s2 or s2 + l2 <= s1: return [(s1, l1)]
-    if s2 <= s1:
-        if s2 + l2 >= s1 + l1: return []
-        else: return [(s2+l2, s1+l1-(s2+l2))]
-    else:
-        if s2 + l2 >= s1 + l1: return [(s1,s2-s1)]
-        else: return [(s1, s2-s1), (s2+l2, (s1+l1)-(s2+l2))]
+    result = []
+    if s1 < s2: result.append((s1, s2-s1))
+    if s2 + l2 < s1 + l1: result.append((s2+l2, (s1+l1) - (s2+l2)))
+    return result
 
 def union_minus(intervals,s1,l1):
     result = []
