@@ -23,3 +23,5 @@ Oh and I did it in Python, I guess I'm already giving up on C++...
 My fastest day so far, by far! I was blocked once because I tried to re-use the function I wrote for part 1 in part 2 but forgot that that function does not give me the number I want but 2^ the number I want. 
 And also I re-learned today that `sum(d)` when `d` is a dict gives you the sum of the dictionary keys, not the values! 
 
+## Day 5
+Got part 1 pretty quickly and part 2 took a while: I thought I'd written enough unit tests but apparently not... Interval intersection and subtraction is tricky.
