@@ -25,3 +25,13 @@ And also I re-learned today that `sum(d)` when `d` is a dict gives you the sum o
 
 ## Day 5
 Got part 1 pretty quickly and part 2 took a while: I thought I'd written enough unit tests but apparently not... Interval intersection and subtraction is tricky.
+
+## Day 6
+Finally a day where things went smooth and where my implementation of part 1 just worked for part 2.
+Since I was done quickly I thought I'd try translating into C++, this time
+without Copilot. Tricky things: 
+  * types: need to use `long long int` instead of `int` everywhere because the numbers
+    are too big otherwise, and `double` for the calculation with floating point
+    numbers.
+  * parsing is so much harder than the simple `split` and range one-liners in
+    Python.
