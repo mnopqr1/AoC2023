@@ -40,3 +40,12 @@ without Copilot. Tricky things:
 Reasonably happy with how today went. The rules for the game are a bit simpler to implement than actual poker. 
 * I first considered classes and `__lt__` but didn't remember how it worked and worried that objects & classes in Python might be too slow.
 * I had a funny bug in part 2 that took me a while to figure out: in order to evaluate a hand containing one or more J's, I was taking the maximum score over all possible replacements for J by one of the other cards that is already present in the hand, thinking that you never need to try any cards that are not already in the hand since they won't help improve the score. That's true, except for one case: the hand "JJJJJ", where you actually _do_ want to try replacing "J" by "A", even if "A" is not already in the hand! I figured it out by print-debugging and finding "JJJJJ" at the very bottom of te sorted list, instead of at the top...
+
+## Day 8
+
+I got part 2 a little haphazardly. After some testing I realized that you only ever end up in a Z node by reading the entire instruction list (of length 307 in my case). So we don't care what happens in the middle, we only care what happens after reading the entire list of instructions once (a "big step"). There were only 6 A nodes in the input and they took about 60 "big steps" each. So then we can just take the least common multiple of these numbers, and multiply it by 307.
+I always find it a bit unsatisfying when a special property of the inputs makes the whole problem much easier. I would like to know what the complexity would have been if we had a completely random input.
+
+## Day 9
+
+This was definitely easier than yesterday even though I wasn't fully awake today and I was thinking that I needed to do something smart with arithmetic sequences or quadratic increments. But I didn't. Also I think this was the smallest difficulty increase from part 1 to part 2 that I've seen so far.
