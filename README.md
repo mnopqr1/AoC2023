@@ -49,3 +49,21 @@ I always find it a bit unsatisfying when a special property of the inputs makes 
 ## Day 9
 
 This was definitely easier than yesterday even though I wasn't fully awake today and I was thinking that I needed to do something smart with arithmetic sequences or quadratic increments. But I didn't. Also I think this was the smallest difficulty increase from part 1 to part 2 that I've seen so far.
+
+## Day 10
+
+Part 1 was OK, and this was the first day where I really struggled with Part 2, for several hours.
+I first missed "In fact, there doesn't even need to be a full tile path to the outside for tiles to count as outside the loop - squeezing between pipes is also allowed!"
+My approach for Part 2: 
+1. read the file and calculate `neighbors` for each node in the grid
+2. calculate where the loop is (in a better way than I did for part 1): 
+  * begin at the startnode, `curr = startnode`, `prev = None`
+  * choose a neighbor of the current node that you did not just visit
+  * update `prev` and `curr`
+3. find the pipe that fits at the `startnode` and pretend from now on that it is that pipe.
+   clean everything up in the `loopgrid`: no more loose pipes.
+4. to deal with the paths that "squeeze between pipes", "zoom in" on the grid: create a `biggrid`
+   that has an extra cell between every two cells of the original grid, and a border around it
+5. "interpolate" by connecting the pipes in the loop to this bigger grid, and keep the original `.` symbols
+6. starting from the outer border, mark as many cells as possible as "outside", and then count how many `.` were left unmarked: these must be inside the loop.
+The code is not super-organized and there are hardly any functions but I've worked on this long enough for today...
