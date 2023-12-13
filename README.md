@@ -75,3 +75,10 @@ This one was alright.
 ## Day 12
 
 I struggled. Brute force approach in part 1 did not work at all in part 2, went down a lot of useless paths yesterday, eventually watched Jonathan Paulson's youtube to get the idea of how to apply dynamic programming in this problem. Then a *lot* of print debugging this morning.
+
+## Day 13
+
+Comparatively much easier for me than yesterday's puzzle. 
+Try all possible mirror-rows and return as soon as you find one.
+For part 2, allow for exactly one error in the diff, once per mirror-check. 
+If nothing was found yet, do the same for columns.
