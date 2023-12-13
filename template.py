@@ -3,8 +3,8 @@ from itertools import product
 
 filename = "input.txt"
 with open(filename) as f:
-    ls = f.readlines()
+    ls = [l.rstrip() for l in f.readlines()]
 
 answer = 0
-expected = 0
-report(filename, answer, expected)
+
+print(answer)

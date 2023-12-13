@@ -67,3 +67,11 @@ My approach for Part 2:
 5. "interpolate" by connecting the pipes in the loop to this bigger grid, and keep the original `.` symbols
 6. starting from the outer border, mark as many cells as possible as "outside", and then count how many `.` were left unmarked: these must be inside the loop.
 The code is not super-organized and there are hardly any functions but I've worked on this long enough for today...
+
+## Day 11
+
+This one was alright.
+
+## Day 12
+
+I struggled. Brute force approach in part 1 did not work at all in part 2, went down a lot of useless paths yesterday, eventually watched Jonathan Paulson's youtube to get the idea of how to apply dynamic programming in this problem. Then a *lot* of print debugging this morning.
