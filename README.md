@@ -82,3 +82,7 @@ Comparatively much easier for me than yesterday's puzzle.
 Try all possible mirror-rows and return as soon as you find one.
 For part 2, allow for exactly one error in the diff, once per mirror-check. 
 If nothing was found yet, do the same for columns.
+
+## Day 14
+
+This was alright, I read off the answer from part 2 from a raw text output first, noticing there were loops. Then wrote a little code to simulate that.
