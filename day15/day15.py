@@ -1,11 +1,8 @@
-from utils import *
-
 filename = "input.txt"
 with open(filename) as f:
     ls = [l.rstrip() for l in f.readlines()]
 
 cs = "".join(ls).split(",")
-answer = 0
 
 def hash(c):
     r = 0
@@ -14,13 +11,11 @@ def hash(c):
         r = r * 17 % 256
     return r
 
-answer = sum(hash(c) for c in cs)
+answer1 = sum(hash(c) for c in cs)    
 
 mem = {}
-box = {p : [] for p in range(256)}
-p = 0
-
-def do(c):
+box = {p : [] for p in range(256)} 
+for c in cs:
     if "-" in c:
         label = c[:-1]
         h = hash(label)
@@ -28,19 +23,12 @@ def do(c):
             j = box[h].index(label)
             box[h] = box[h][:j] + box[h][j+1:]
     else:
-        i = c.index("=")
-        label, val = c[:i], c[i+1:]
-        val = int(val)
+        label, val = c.split("=")
         h = hash(label)
-        mem[label] = val
+        mem[label] = int(val)
         if label not in box[h]:
             box[h].append(label)
-            
-for c in cs:
-    do(c)
 
-answer = 0
-for i in range(256):
-    for j in range(len(box[i])):
-        answer += (j+1) * (i+1) * mem[box[i][j]]
-print(answer)
+answer2 = sum((j+1)*(i+1)*mem[box[i][j]] for i in range(256) for j in range(len(box[i])))
+
+print(answer1, answer2)
