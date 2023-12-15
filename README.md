@@ -86,3 +86,7 @@ If nothing was found yet, do the same for columns.
 ## Day 14
 
 This was alright, I read off the answer from part 2 from a raw text output first, noticing there were loops. Then wrote a little code to simulate that.
+
+## Day 15
+
+I found today to be satisfying; putting things in boxes. I woke up so early (5:50am) that I could see the new day "appear", that was exciting. May take a nap later.
