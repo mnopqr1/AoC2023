@@ -26,39 +26,24 @@ class Beam:
  
         if not ((0 <= self.x < h) and (0 <= self.y < w)):
             return []
-        
-        match grid[(self.x,self.y)]:
-            case "/":
-                self.register()
-                self.dx, self.dy = MIRROR["/"][(self.dx,self.dy)]
+
+        c = grid[(self.x,self.y)]
+        if c == "/" or c== "\\":
+            self.register()
+            self.dx, self.dy = MIRROR[c][(self.dx,self.dy)]
+            self.register()
+            self.step()
+            return [self]
+        else:
+            # assert c == "-" or c == "|"
+            newdirs = MIRROR[c][(self.dx,self.dy)]
+            if len(newdirs) == 0:
                 self.register()
                 self.step()
                 return [self]
-            case "\\":
-                self.register()
-                self.dx, self.dy = MIRROR["\\"][(self.dx,self.dy)]
-                self.register()
-                self.step()
-                return [self]
-            case "-":
-                if self.dx == 0:
-                    self.register()
-                    self.step()
-                    return [self]
-                else:
-                    b1 = Beam(self.x, self.y, 0,1)
-                    b2 = Beam(self.x, self.y, 0,-1)
-                    return [b1,b2]
-            case "|":
-                if self.dy == 0:
-                    self.register()
-                    self.step()
-                    return [self]
-                else:
-                    b1 = Beam(self.x, self.y, 1,0)
-                    b2 = Beam(self.x, self.y, -1,0)
-                    return [b1,b2]
-    
+            else:
+                return [Beam(self.x,self.y,dx,dy) for (dx,dy) in newdirs]
+
 filename = "input.txt"
 with open(filename) as f:
     ls = [l.rstrip() for l in f.readlines()]
@@ -91,11 +76,9 @@ results = []
 for x in range(h):
     results.append(test(x,0,0,1))
     results.append(test(x,w-1,0,-1))
-    print(x)
 for y in range(w):
     results.append(test(0,y,1,0))
     results.append(test(h-1,y,-1,0))
-    print(y)
-results.append(test(0,0,0,1))
+
 assert results[0] == 7623
 assert max(results) == 8244 

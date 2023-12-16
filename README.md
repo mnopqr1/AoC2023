@@ -90,3 +90,10 @@ This was alright, I read off the answer from part 2 from a raw text output first
 ## Day 15
 
 I found today to be satisfying; putting things in boxes. I woke up so early (5:50am) that I could see the new day "appear", that was exciting. May take a nap later.
+
+## Day 16
+
+My main idea was that as soon as a beam comes into a node with a direction that has already happened 
+we can stop tracking it. I was worried that I would need to be more efficient in part 2. You could 
+memoize a beam's trajectory and as soon as you enter the same trajectory, just recall from memory
+what happened. But it turned out that wasn't needed.
