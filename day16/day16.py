@@ -1,5 +1,4 @@
-from typing import List, Tuple
-from utils import *
+from typing import List
 from itertools import product
 from dataclasses import dataclass
 
@@ -31,14 +30,11 @@ class Beam:
         if c == "/" or c== "\\":
             self.register()
             self.dx, self.dy = MIRROR[c][(self.dx,self.dy)]
-            self.register()
             self.step()
             return [self]
-        else:
-            # assert c == "-" or c == "|"
+        else: # c == "-" or c == "|"
             newdirs = MIRROR[c][(self.dx,self.dy)]
             if len(newdirs) == 0:
-                self.register()
                 self.step()
                 return [self]
             else:
@@ -50,11 +46,10 @@ with open(filename) as f:
 h, w = len(ls), len(ls[0])
 grid = {(x,y) : ls[x][y] for (x,y) in product(range(h),range(w))}
 DIRS = [(1,0),(-1,0),(0,1),(0,-1)]
-
-MIRROR = {"/" : {(0,1):(-1,0), (-1,0):(0,1), (1,0):(0,-1), (0,-1):(1,0)},
-          "\\" : {(0,1):(1,0), (-1,0):(0,-1), (1,0):(0,1), (0,-1):(-1,0)},
-          "-" : {(0,1) : [], (0,-1): [], (1,0) : [(0,1),(0,-1)], (-1,0) : [(0,1),(0,-1)]},
-          "|" : {(1,0) : [], (-1,0): [], (0,1) : [(1,0),(-1,0)], (0,-1) : [(1,0),(-1,0)]}}
+MIRROR = {"/" :  {(0, 1): (-1, 0), (-1, 0): (0, 1), (1, 0): (0,-1), (0, -1): ( 1, 0)},
+          "\\" : {(0, 1): ( 1, 0), (-1, 0): (0,-1), (1, 0): (0, 1), (0, -1): (-1, 0)},
+          "-" :  {(0, 1) : [], (0, -1): [], (1, 0) : [(0, 1), (0, -1)], (-1,0) : [(0, 1), (0, -1)]},
+          "|" :  {(1, 0) : [], (-1, 0): [], (0, 1) : [(1, 0), (-1, 0)], (0,-1) : [(1, 0), (-1, 0)]}}
 
 def reset():
     for (x,y) in product(range(h),range(w)):
@@ -65,11 +60,9 @@ def test(x,y,dx,dy):
     reset()
     beams = [Beam(x,y,dx,dy)]
     while len(beams) > 0:
-        newbeams = []
-        for b in beams:
-            newbeams += b.update()
-        beams = newbeams
-    return len([(x,y) for (x,y) in product(range(h),range(w)) if any(visited[(x,y,dx,dy)] for (dx,dy) in DIRS)])
+        beams = [nb for b in beams for nb in b.update()]
+    return len([(x,y) for (x,y) in product(range(h),range(w))  
+                      if any(visited[(x,y,dx,dy)] for (dx,dy) in DIRS)])
     
 visited = {(x,y,dx,dy) : False for (x,y) in product(range(h),range(w)) for (dx,dy) in DIRS}
 results = []

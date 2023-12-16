@@ -13,7 +13,6 @@ fi
 mkdir -p ${DIR}
 cd ${DIR}
 cp ../template.py ${NAME}
-ln -s ../utils.py utils.py
 cd ..
 ./getinput ${D}
 code .
