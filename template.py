@@ -1,4 +1,3 @@
-from utils import *
 from itertools import product
 
 filename = "input.txt"
