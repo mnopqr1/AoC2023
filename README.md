@@ -100,12 +100,12 @@ what happened. But it turned out that wasn't needed.
 
 ## Day 17
 
-After struggling with part 1 for a few hours I decided I did't want to spend my entire Sunday
+After struggling with part 1 for a few hours I decided I didn't want to spend my entire Sunday
 on this (especially because it's finally nice and sunny again here in Paris) so I watched
-[Jonathan Paulson solve part 1](). I was happy to see he went more or less through the same
+[Jonathan Paulson solve part 1](https://www.youtube.com/watch?v=jcZw1jRkUDE). I was happy to see he went more or less through the same
 thought process as I did (just at approximately 20x speed). Then he pulled `heapq` out of a
 hat and I'm still not entirely sure why that works, but with that clue I solved part 1, and 
-then also part 2 after a little more struggles.
+then was also able to do part 2 "on my own" after a few more smaller struggles.
 Another reminder that I would like to understand the ins and outs of heaps better.
 I also learned a Python print debugging trick from Jonathan Paulson: `print(f"{x=}{y=}")` 
 prints out something like `x=5 y=6` which is useful when you have a lot of different variables.
