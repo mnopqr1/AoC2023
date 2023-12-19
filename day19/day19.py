@@ -9,6 +9,8 @@ ws_raw = ls[:s]
 ms_raw = ls[s+1:]
 ws = dict()
 start = -1
+
+count = 0
 for j, w in enumerate(ws_raw):
     name, rest = w.split("{")
     insts_raw = rest[:-1].split(",")
@@ -22,6 +24,11 @@ for j, w in enumerate(ws_raw):
             val = int(val)
             insts.append((var,op,val,dest))
     ws[name] = insts
+
+dests = set()
+for k,v in ws.items():
+    for i in v:
+        dests.add(i[-1])
 
 ms = []
 for m in ms_raw:

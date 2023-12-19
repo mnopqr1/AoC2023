@@ -109,3 +109,12 @@ then was also able to do part 2 "on my own" after a few more smaller struggles.
 Another reminder that I would like to understand the ins and outs of heaps better.
 I also learned a Python print debugging trick from Jonathan Paulson: `print(f"{x=}{y=}")` 
 prints out something like `x=5 y=6` which is useful when you have a lot of different variables.
+
+## Day 18
+
+Didn't have much time and struggled with part 1... 
+
+## Day 19
+
+Got part 1 pretty quickly and then had to go to work, thought a bit about part 2 during
+the day and got back to writing some code in the evening. I figured that you could work from the "bottom up", meaning first find out what is the range of inputs accepted by lines that only have A's and R's, then figure out that same thing for instructions that have A's, R's, and things already treated previously. To evaluate a single line, I iterate through the list of tests in order and keep track of what range could remain. It was nice and a bit surprising that this just.. worked.
