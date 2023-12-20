@@ -118,3 +118,16 @@ Didn't have much time and struggled with part 1...
 
 Got part 1 pretty quickly and then had to go to work, thought a bit about part 2 during
 the day and got back to writing some code in the evening. I figured that you could work from the "bottom up", meaning first find out what is the range of inputs accepted by lines that only have A's and R's, then figure out that same thing for instructions that have A's, R's, and things already treated previously. To evaluate a single line, I iterate through the list of tests in order and keep track of what range could remain. It was nice and a bit surprising that this just.. worked.
+
+## Day 20
+
+Got something almost working for part 1 in the morning but had to leave for work.
+Then got part 1 pretty quickly in the afternoon.
+A little bit of objects and classes was helpful to me for this problem.
+For part 2 when reading it I first thought "this can't be that hard",
+famous last words, until I realized that `rx`  requires four inputs to 
+be high at exactly the same time.
+I printed out the times when these four inputs are high, and, as I hoped, it happens 
+cyclically, and even for each of them the first time they are high is after a prime number
+of button presses. This means the first time all of them will be high is after the product
+of these four prime numbers, which is a gigantic number of button presses.

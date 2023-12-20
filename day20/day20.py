@@ -112,6 +112,7 @@ while not done:
         done = n_presses == 1000
 
 if part2: 
+    print(firsttime)
     print(reduce(lambda x,y: x*y,firsttime.values()))
 else:
     print(Pulse.n_low * Pulse.n_high)
