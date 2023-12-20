@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Dict, List
 
 
-filename = "input.txt"
+filename = "test.txt"
 with open(filename) as f:
     ls = [l.rstrip() for l in f.readlines()]
 
@@ -20,6 +20,8 @@ class Module:
     state : bool
 
     def handle(self, p):
+        assert self.name == p.tow
+        print(f"{self.name} handles {p}")
         newps = []
         tosend = False
         if self.ty == "b":
@@ -32,12 +34,17 @@ class Module:
                 sendval = self.state
                 tosend = True
         
-        
-        if tosend:
-            for d in ds:
-                newp = Pulse(sendval, d)
-                newps.append(newp)
+        if self.ty == "&":
+            self.mem[p.cur] = p.value
+            sendval = not all(self.mem[n] for n in self.ins)
+            tosend = True
 
+        if tosend:
+            print(f"Preparing to send to {self.ds}")
+            for d in self.ds:
+                newp = Pulse(sendval, self.name, d)
+                newps.append(newp)
+                print(f"{self.name} sends {newp}")
 
         return newps
 
@@ -45,17 +52,19 @@ class Module:
 class Pulse:
     n: int
     value: bool
-    loc: str
+    cur: str
+    tow: str
     n_pulses = 0
 
-    def __init__(self, value=False, loc="button"):
+    def __init__(self, value=False, cur="button", tow="roadcaster"):
         Pulse.n_pulses += 1
         self.n = Pulse.n_pulses
         self.value = value
-        self.loc = loc
+        self.cur = cur
+        self.tow = tow
 
     def __repr__(self):
-        return f"({self.n}, {self.value})"
+        return f"({self.n=}, {self.value=}, {self.cur=}, {self.tow=})"
 
 
 answer = 0
@@ -73,15 +82,27 @@ for l in ls:
     for d in ds:
         if d not in module.keys():
             module[d] = Module(".",d,[],[],{},False)
-    print(name)
-    p1 = Pulse()
-    p2 = Pulse()
+    # print(name)    
 
 for n in module.keys():
     for d in module[n].ds:
         module[d].ins.append(n)
         module[d].mem[n] = False
 
-for n in module.keys():
-    print(module[n])
+# for n in module.keys():
+#     print(module[n])
+
+p = Pulse()
+stack = [p]
+
+while len(stack) > 0:
+    p = stack.pop()
+    print(f"Current pulse: {p}")
+    handler = module[p.tow]
+    print(f"Current handler: {handler}")
+    newps = handler.handle(p)
+    stack += newps
+    print(stack)
+    input()
+
 print(answer)
