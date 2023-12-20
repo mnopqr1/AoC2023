@@ -14,25 +14,20 @@ class Module:
 
     def handle(self, p):
         assert self.name == p.tow
-        # print(f"{self.name} handles {p}")
         newps = []
-        tosend = False
         if self.ty == "b":
             sendval = p.value
-            tosend = True
             
         if self.ty == "%":
             if p.value == False:
                 self.state = not self.state
                 sendval = self.state
-                tosend = True
         
         if self.ty == "&":
             self.mem[p.cur] = p.value
             sendval = not all(self.mem[n] for n in self.ins)
-            tosend = True
 
-        if tosend:
+        if not(self.ty == "%" and p.value == True):
             for d in self.ds:
                 newp = Pulse(sendval, self.name, d)
                 newps.append(newp)
@@ -61,10 +56,6 @@ class Pulse:
         self.cur = cur
         self.tow = tow
 
-    def __repr__(self):
-        return f"({self.n=}, {self.value=}, {self.cur=}, {self.tow=})"
-
-
 module = dict()
 
 filename = "input.txt"
@@ -85,21 +76,22 @@ for l in ls:
     for d in ds:
         if d not in module.keys():
             module[d] = Module(".",d,[],[],{},False)
-    # print(name)    
 
 for n in module.keys():
     for d in module[n].ds:
         module[d].ins.append(n)
         module[d].mem[n] = False
 
-done = False
-n_presses = 0
 
 D = False
 D2 = False
 
+part2 = True
 ddins = module["dd"].ins
 firsttime = {d: None for d in ddins}
+
+done = False
+n_presses = 0
 while not done:
     if D: print(f"------\npress button {n_presses+1}\n-----")
     n_presses += 1
@@ -111,14 +103,15 @@ while not done:
         handler = module[p.tow]
         newps = handler.handle(p)
         for q in newps:
-            # if q.tow == "rx" and q.value == False:
-            #     done = True
-            # if D2:
             if q.tow == "dd" and q.value == True and firsttime[q.cur] is None:
-                # print(f"{q.cur} sends high to dd at button press {n_presses}")
                 firsttime[q.cur] = n_presses
         stack += newps
-    done = all(firsttime[d] is not None for d in firsttime.keys())
+    if part2:
+        done = all(firsttime[d] is not None for d in firsttime.keys())
+    else:
+        done = n_presses == 1000
 
-# print(Pulse.n_low * Pulse.n_high)
-print(reduce(lambda x,y: x*y,firsttime.values()))
+if part2: 
+    print(reduce(lambda x,y: x*y,firsttime.values()))
+else:
+    print(Pulse.n_low * Pulse.n_high)
