@@ -131,3 +131,15 @@ I printed out the times when these four inputs are high, and, as I hoped, it hap
 cyclically, and even for each of them the first time they are high is after a prime number
 of button presses. This means the first time all of them will be high is after the product
 of these four prime numbers, which is a gigantic number of button presses.
+
+## Day 25
+
+I struggled and then saw that people online used the `networkx` library.
+But I wanted to do it without a library.
+I read about "max flow min cut" for a while but thought it was too complicated.
+Then I found [this paper](https://dl.acm.org/doi/10.1145/263867.263872) that explains
+in a fairly readable way how to find a min cut.
+It took me a while to get to an implementation that was both not too slow and not wrong.
+But I learned something!
+And I am "just" missing 7 stars (holidays made me spend less time on this 
+over the last few days).
