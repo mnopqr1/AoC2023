@@ -1,90 +1,51 @@
-from itertools import product
-
-filename = "test.txt"
+filename = "input.txt"
 with open(filename) as f:
     ls = [l.rstrip() for l in f.readlines()]
 
 DIRS = [(0,1), (1,0), (0,-1), (-1,0)]
 cx, cy = 0, 0
 pts = [(0,0)]
-down = set()
-up = set()
+
 for l in ls:
     _, _, code = l.rstrip().split(" ")
     d = int(code[-2])
     s = int(code[2:-2],16)
-    assert s >= 4
-    dx,dy = DIRS[d]
+    dx, dy = DIRS[d]
     ex = cx + s * dx
     ey = cy + s * dy
-    if d == 1:
-        down.add((cx,cy,ex,ey))
-    if d == 3:
-        up.add((cx,cy,ex,ey))
     pts.append((ex,ey))
     cx, cy = ex, ey
 
-# xmin = min(p[0] for p in grid)-1
-# xmax = max(p[0] for p in grid)+1
-# ymin = min(p[1] for p in grid)-1
-# ymax = max(p[1] for p in grid)+1
+assert pts[0] == pts[-1]
 
-xs = list(set(p[0] for p in pts))
-ys = list(set(p[1] for p in pts))
-xs.sort()
-ys.sort()
+# https://stackoverflow.com/questions/451426/how-do-i-calculate-the-area-of-a-2d-polygon
+def area(pts):
+    n = len(pts)
+    res = 0
+    for i in range(n-1):
+        x0, y0 = pts[i]
+        x1, y1 = pts[i+1]
+        res += x0 * y1 - x1 * y0
+    return abs(res) // 2
 
-# for x in xs:
-#     print(x)
-# for y in ys:
-#     print(y)
-exit()
-inner = 0
-# filled_grid = set()
-for x in range(xmin,xmax):
-    # print(f"{x=}")
-    s = 0
-    y = ymin
-
-    while y < ymax:
-        if (x,y) in grid:
-            cs = 0
-            cs -= int((x,y) in down)
-            cs += int((x,y) in up)
-            while (x,y) in grid:
-                inner += 1
-                # filled_grid.add((x,y))
-                y += 1
-                cs -= int((x,y) in down)
-                cs += int((x,y) in up)
-            if cs > 0:
-                s += 1
-            if cs < 0:
-                s -= 1
+def perimeter(pts):
+    res = 0
+    n = len(pts)
+    for i in range(n-1):
+        x0, y0 = pts[i]
+        x1, y1 = pts[i+1]
+        if x0 == x1:
+            res += abs(y1 - y0) 
+        elif y0 == y1:
+            res += abs(x1 - x0) 
         else:
-            if s % 2 == 1:
-                inner += 1
-                # filled_grid.add((x,y))
-            y += 1  
+            assert False, "line segment not straight"
+    return res
 
-def show(g,borders=False):
-    for x in range(xmin,xmax):
-        for y in range(ymin,ymax):
-            if (x,y) in g:
-                if borders:
-                    if (x,y) in up:
-                        print("+", end="")
-                    elif (x,y) in down:
-                        print("-", end="")
-                    else:
-                        print("#", end="")
-                else:
-                    print("#", end="")
-            else:
-                print(".", end="")
-        print()
+a = area(pts)
+p = perimeter(pts)
 
-# show(grid,True)
-# print()
-# show(filled_grid)
-print(inner)
+# obtained the following by experimenting with the test input...
+answer = a + (p//2) + 1
+
+assert answer == 71262565063800

@@ -143,3 +143,9 @@ It took me a while to get to an implementation that was both not too slow and no
 But I learned something!
 And I am "just" missing 7 stars (holidays made me spend less time on this 
 over the last few days).
+
+## Day 18 (on day 26)
+Got part 1 on the actual 18th, then left part 2 until now.
+Lowest line-of-code per time-spent-on-this ratio yet.
+Eventually found a way to do it at [this Stackoverflow answer](https://stackoverflow.com/questions/451426/how-do-i-calculate-the-area-of-a-2d-polygon) and then experimented with the test input to see how much of the perimeter I needed to add.
+Felt hacky and maybe I want to get back to this at some point to at least understand how it works...
