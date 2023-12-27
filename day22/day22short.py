@@ -15,14 +15,12 @@ def length(s,e):
 class Brick:
     s: Tuple[int,int,int]
     d: int
-    name: str
     key: int
     locations: List[int]
 
-    def __init__(self,s,e,name,key):
+    def __init__(self,s,e,key):
         self.s = s
         self.e = e
-        self.name = name
         self.key = key
         self.d = direction(s,e)
         
@@ -32,9 +30,6 @@ class Brick:
             dx,dy,dz = directions[self.d]
             for c in range(1,length(s,e)):
                 self.locations.append((sx+c*dx,sy+c*dy,sz+c*dz))
-
-    def __repr__(self):
-        return f"{self.name}: {self.s} - {self.e}, direction {self.d}, length {len(self.locations)}"
 
     def isvertical(self):
         return self.d in [0,1]
@@ -109,9 +104,8 @@ def main():
     bricks = []
     for i, l in enumerate(ls):
         s, e = [tuple(int(co) for co in p.split(",")) for p in l.split("~")]
-        name = chr(ord('A')+(i%26))
         key = i
-        bricks.append(Brick(s,e,name,key))
+        bricks.append(Brick(s,e,key))
 
     maxs = [max(b.e[i] for b in bricks) for i in range(3)]
     grid = Grid(maxs)
