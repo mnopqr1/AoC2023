@@ -1,59 +1,54 @@
 from itertools import product
 from typing import List, Tuple
 
+DIR = [(1,0,0), (0,1,0), (0,0,1)]
+
 def direction(s,e):
     diff = [i for i in range(3) if s[i] != e[i]]
-    assert len(diff) <= 1
     return diff[0] if len(diff) == 1 else None
 
 def length(s,e):
     d = direction(s,e)
     if d is None: return 1
-    assert e[d] > s[d]
     return e[d] - s[d] + 1
-
-directions = [(1,0,0),(0,1,0),(0,0,1)]
 
 class Brick:
     s: Tuple[int,int,int]
     d: int
-    name: str
     key: int
-    occupies: List[int]
+    locations: List[int]
 
-    def __init__(self,s,e,name,key):
+    def __init__(self,s,e,key):
         self.s = s
         self.e = e
-        self.name = name
         self.key = key
-        self.occupies = [s]
         self.d = direction(s,e)
         
+        self.locations = [s]
         sx, sy, sz = s
         if self.d is not None:
-            dx,dy,dz = directions[self.d]
-            for c in range(1,length(s,e)):
-                self.occupies.append((sx+c*dx,sy+c*dy,sz+c*dz))
-        # assert len(self.occupies) == length(s,e)
+            dx, dy, dz = DIR[self.d]
+            for c in range(1, length(s, e)):
+                self.locations.append((sx + c * dx, sy + c * dy, sz + c * dz))
 
-    def __repr__(self):
-        return f"{self.name}: {self.s} - {self.e}, direction {self.d}, length {len(self.occupies)}"
-
+    def isvertical(self):
+        return self.d in [0,1]
+    
     def dropone(self):
         sx,sy,sz = self.s
         ex,ey,ez = self.e
-        self.s = (sx,sy,sz-1)
-        self.e = (ex,ey,ez-1)
-        self.occupies = [(x,y,z-1) for (x,y,z) in self.occupies]
+        self.s = (sx, sy, sz-1)
+        self.e = (ex, ey, ez-1)
+        self.locations = [(x, y, z-1) for (x, y, z) in self.locations]
 
 class Grid:
     def __init__(self, maxs):
-        self.content = {z: 
-         {(i,j) : None for (i,j) in product(range(0,maxs[0]+1),range(0,maxs[1]+1))} 
+        self.content = \
+        {z: {(i,j) : None for (i,j) in product(range(0,maxs[0]+1),range(0,maxs[1]+1))} \
          for z in range(1,maxs[2]+1)}
         self.maxx, self.maxy, self.maxz = maxs
-        
-    def set(self, x,y,z, b):
+
+    def set(self, x, y, z, b):
         self.content[z][(x,y)] = b
 
     def get(self, x,y,z):
@@ -61,147 +56,74 @@ class Grid:
     
     def isempty(self,x,y,z):
         return self.content[z][(x,y)] is None
-    
-    def showlevel(self,z):
-        for (x,y) in product(range(0,self.maxx+1),range(0,self.maxy+1)):
-            print(self.content[z][(x,y)], end="")
-            if y == self.maxy:
-                print()
-
-    def showfront(self):
-        for z in range(self.maxz,0,-1):
-            print(z, end=" ")
-            for x in range(0,self.maxx+1):
-                for y in range(0,self.maxy+1):
-                    c = self.content[z][(x,y)]
-                    if c is not None: 
-                        print(c.name, end="")
-                        break
-                if y == self.maxy and c is None:
-                    print(".", end="")
-            print()
-
-    def showside(self):
-        for z in range(self.maxz,0,-1):
-            print(z, end=" ")
-            for y in range(0,self.maxy+1):
-                for x in range(0,self.maxx+1):
-                    c = self.content[z][(x,y)]
-                    if c is not None: 
-                        print(c.name, end="")
-                        break
-                if x == self.maxx and c is None:
-                    print(".", end="")
-            print()
 
 def canfall(b,g):
-    if b.s[2] == 1:
+    # a brick can fall iff it doesn't start at the grond and there is nothing below its bottom
+    return b.s[2] != 1 and all(z != b.s[2] or g.isempty(x, y, z-1) for (x, y, z) in b.locations)
+
+def fall(b, g):
+    # return False if the brick can't drop a single bit
+    if not canfall(b, g):
         return False
-    for (x,y,z) in b.occupies:
-        if z == b.s[2] and not g.isempty(x,y,z-1):
-            return False
+    while canfall(b, g):
+        for (x,y,z) in b.locations:
+            g.set(x, y, z, None)
+        for (x,y,z) in b.locations:
+            g.set(x, y, z-1, b)
+        b.dropone()
     return True
 
-def dropone(b,g):
-    for (x,y,z) in b.occupies:
-        g.set(x,y,z, None)
-    for (x,y,z) in b.occupies:
-        assert g.isempty(x,y,z-1)
-        g.set(x,y,z-1,b)
-    b.dropone()
-
-def supports(b,g):
+def supports(b, g):
+    # the bricks supported by b in grid g are those just above its top part
     res = []
-    if b.d == 0 or b.d == 1:
-        for (x,y,z) in b.occupies:
-            if z < g.maxz:
-                c = g.get(x,y,z+1)
-                if c is not None:
-                    res.append(c)
-    else:
-        x,y,z = b.e
+    toppart = b.locations if b.isvertical() else [b.e]
+    for (x,y,z) in toppart:
         if z < g.maxz:
             c = g.get(x,y,z+1)
             if c is not None:
                 res.append(c)
     return list(set(res))
 
-D = False
-def debug(grid):
-    grid.showfront()
-    print("-" * 10)
-    grid.showside()
-
-
-def fall(b,grid):
-    if D: 
-        print(b)
-        debug(grid)
-    if not canfall(b,grid):
-        if D: 
-            print(f"{b.name} cannot fall, returning immediately")
-            input()
-        return True
-    while canfall(b,grid):
-        if D: print(f"{b.name} can fall")
-        dropone(b,grid)
-        if D: 
-            print(f"after falling:")
-            debug(grid)
-            input()
-    if D:
-        print(f"{b.name} has stopped falling, returning")
-        input()
-    return False
-
-
-def experiment(supporting, supportedby,b):
+def tryremoving(supporting, supportedby, b):
+    # for part 2, a brick will fall if it is at some point supported only by falling bricks
     queue = [b]
-    reached = set()
-    reached.add(b)
+    falling = {b}
     while len(queue) > 0:
         cur = queue.pop(0)
         for c in supporting[cur]:
-            if all(d in reached for d in supportedby[c]):
+            if all(d in falling for d in supportedby[c]):
                 queue.append(c)
-                reached.add(c)
-    return len(reached)-1
+                falling.add(c)
+    return len(falling) - 1 # minus one because b itself doesn't count
 
 def main():
     filename = "input.txt"
     with open(filename) as f:
         ls = [l.rstrip() for l in f.readlines()]
 
+    # create bricks
     bricks = []
     for i, l in enumerate(ls):
         s, e = [tuple(int(co) for co in p.split(",")) for p in l.split("~")]
-        name = chr(ord('A')+(i%26))
         key = i
-        bricks.append(Brick(s,e,name,key))
+        bricks.append(Brick(s,e,key))
 
-    if D:
-        for b in bricks:
-            print(b)
-
+    # put bricks in grid
     maxs = [max(b.e[i] for b in bricks) for i in range(3)]
     grid = Grid(maxs)
-
     for b in bricks:
-        for (nx,ny,nz) in b.occupies:
-            assert grid.isempty(nx,ny,nz) # there should be no overlapping blocks in beginning
+        for (nx,ny,nz) in b.locations:
             grid.set(nx,ny,nz,b)
     
+    # let bricks fall until nothing moves for a whole turn
     done = False
     while not done:
         done = True
         for b in bricks:
-            if D: print(f"starting to drop {b.name}")
-            r = fall(b,grid)
-            done = (done and r)
-        if D:
-            debug(grid)
-            input()
+            if fall(b,grid):
+                done = False
 
+    # determine what brick supports what other brick
     supporting = {b : [] for b in bricks}
     supportedby = {b : [] for b in bricks}
     for b in bricks:
@@ -209,29 +131,20 @@ def main():
         for c in supporting[b]:
             supportedby[c].append(b)
     
-    ct = 0
+    # count (part 1)
+    ct1 = 0
     for b in bricks:
-        if D:
-            print(f"{b.name} supports:")
-            print(supporting[b])
-            print(f"{b.name} is supported by:")
-            print(supportedby[b])
-        
-        nec = False
-        for c in supporting[b]:
-            if len(supportedby[c]) == 1:
-                nec = True
-                # assert supportedby[c] == [b]
-                if D: print(f"{b.name} cannot be removed")
-        if not nec:
-            ct += 1
-    print(ct)
+        if not any(len(supportedby[c]) == 1 for c in supporting[b]):
+            ct1 += 1
+
+    # count (part 2)
     ct2 = 0
     for b in bricks:
-        ct2 += experiment(supporting,supportedby,b)
-    print(ct2)
+        r = tryremoving(supporting,supportedby,b)
+        ct2 += r
 
-    assert ct == 441
+    assert ct1 == 441
     assert ct2 == 80778
 
-main()
+if __name__ == "__main__":
+    main()
