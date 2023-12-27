@@ -17,6 +17,6 @@ for l in ls:
     area += cx * ey - ex * cy
     cx, cy = ex, ey
 
-answer = abs(area) + (perim//2) + 1
+answer = abs(area//2) + (perim//2) + 1
 
 assert answer == 71262565063800
