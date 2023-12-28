@@ -1,99 +1,88 @@
-from functools import cache
-from itertools import product
+from dataclasses import dataclass
 
-filename = "test.txt"
+# this solution closely follows
+# https://www.reddit.com/r/adventofcode/comments/18pnycy/comment/kersplf/
+
+filename = "input.txt"
 with open(filename) as f:
     ls = [l.rstrip() for l in f.readlines()]
 
+@dataclass
+class Vec:
+    x: int
+    y: int
+    z: int
 
-stones = []
-for l in ls:
-    p,v = l.split(" @ ")    
-    x,y,z = map(int,p.split(", "))
-    dx,dy,dz = map(int,v.split(", "))
-    stones.append(((x,y,z),(dx,dy,dz)))
+def dot(v,w):
+    return v.x * w.x + v.y * w.y + v.z * w.z
 
-@cache
-def slope_offset(x,y,dx,dy):
-    assert dx != 0
-    slope = dy/dx
-    offset = y - slope * x
-    return (slope, offset)
+def independent(v,w):
+    return dot(v,w) != 0 
 
-def future(x,y,dx,dy,ix,iy):
-    t = (ix - x) / dx
-    # assert round(y + dy * t,5) == iy
-    return t >= 0
+def cross(v,w):
+    return Vec(v.y*w.z - w.y*v.z, -v.x*w.z + v.z*w.x, v.x*w.y - v.y*w.x)
 
+def minus(v,w):
+    return Vec(v.x-w.x,v.y-w.y,v.z-w.z)
 
-# p + tv has to intersect with (pi + tvi) for all i, at t >= 0
-# (a + td, b + te, c + tf) = (x + tdx, y + tdy, z + tdz) has to have a solution in t
-# all to one side
-# a - x + t(d-dx) = 0
-# b - y + t(e-dy) = 0
-# c - z + t(f-dz) = 0
-# if there is a solution t then, for every (x,y,z,dx,dy,dz) stone:
-# (a-x)(e-dy)(f-dz) = (b-y)(d-dx)(f-dz) = (c-z)(d-dx)(e-dy)
-# (a-x')(e-dy')(f-dz') = (b-y')(d-dx')(f-dz')=(c-z')(d-dx')(e-dy')
+def plane(p1,v1,p2,v2):
+    a = minus(p1,p2)
+    b = minus(v1,v2)
+    return (cross(a,b),dot(a,cross(v1,v2)))
 
-# there has to exist t >= 0 such that
-# a + d t = x + dx t
-# the solution of this equation is
-# t = (x-a) / (d - dx) IF d != dx (otherwise no solution)
-# this is > 0 iff x - a and d - dx have the same sign.
-# but we want to simultaenously satisfy the y and z equations.
+def scale(r, v):
+    return Vec(r * v.x, r * v.y, r * v.z)
 
-# imagine one of the stones is (0,0,0,0,0,1)
-# so at time t it's at (0,0,t)
-# this means that the rock we throw must cross the (0,0,z) plane at time t.
-# our rock crosses the (0,0,z) plane when? a + td = 0 and b + te = 0 so t = -a/d = -b/e
-# it only crosses that plane IF ae - bd = 0, otherwise it just doesn't. And we want -a/d >= 0 so
-# a/d <= 0.
-# for example if we start at (-1,-2,z) and v = (3,6,vz) then the rock is at (-1 + 3t, -2 + 6t, z+vz t)
-# at time t so at t = 1/3 we're in z + 1/3 vz and this should be equal to 1/3.
+def invscale(r, v):
+    assert v.x % r == 0 and v.y % r == 0 and v.z % r == 0
+    return Vec(v.x // r, v.y // r, v.z // r)
 
+def add2(v1,v2):
+    return Vec(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z)
 
+def add3(v1,v2,v3):
+    return add2(add2(v1, v2), v3)
 
-# if one stone is (x,y,z,dx,dy,dz)
-# then at time t it's at (x + dx t, y + dy t, z + dz t).
-# the rock we throw is (a,b,c,d,e,f)
-# we want that x + dx t = a + d t and y + dy t = b + e t have a simultaneous solution of t.
-# for this, we need that t0 = (x - a)/(d - dx) = (y - b)/(e - dy) >= 0, giving some constraints
-# on a,b,d,e
-# given these constraints we want that c + t0 f = z + dz t also giving some constraints on c and f.
+def intersect(p,u,q,v):
+    w = cross(u,v)
+    a = dot(w,cross(q,v))
+    b = -dot(w,cross(p,u))
+    c = dot(p,w)
+    return invscale(dot(w,w), add3(scale(a,u),scale(b,v),scale(c,w)))
 
-def show_constraint(x,y,z,dx,dy,dz):
-    print(f"({x} - rx)(rdy - {dy}) = ({y} - ry)(rdx - {dx})")
-    print(f"rx = {x} - ({y} - ry)(rdx - {dx})/(rdy - {dy})")
+def main():
+    stones = []
+    for l in ls:
+        p,v = l.split(" @ ")    
+        x,y,z = map(int,p.split(", "))
+        dx,dy,dz = map(int,v.split(", "))
+        stones.append((Vec(x,y,z),Vec(dx,dy,dz)))
 
-    print(f"({x} - rx)(rdx - {dx}) >= 0")
+    # we only use the first three stones
+    p1,v1 = stones[0]
+    p2,v2 = stones[1]
+    p3,v3 = stones[2]
 
-for (p,v) in stones:
-    x,y,z = p
-    dx,dy,dz = v
-    show_constraint(x,y,z,dx,dy,dz)
-answer = 0
+    # we check that they are giving new information
+    assert independent(p1,p2) and independent(p1,p3) and independent(p2,p3)
+    assert independent(v1,v2) and independent(v1,v3) and independent(v2,v3)
 
+    # we find the velocity vector w by intersecting three planes
+    a, A = plane(p1,v1,p2,v2)
+    b, B = plane(p1,v1,p3,v3)
+    c, C = plane(p2,v2,p3,v3)
 
-print(answer)
+    v = add3(scale(A,cross(b,c)),scale(B,cross(c,a)),scale(C,cross(a,b)))
+    w = invscale(dot(a, cross(b,c)), v)
 
-# if we throw the rock in direction (0,0,1) from point (0,0,0)
-# then at time t >= 0 it's at (0,0,t)
-# so we need that all other rocks have a positive t-solution to
-# x + dx t = 0
-# y + dy t = 0
-# z + dz t = t
-#
-# so t = -x / dx = -y / dy
-# and z -(x dz)/dx = -x / dx => z dx - x (dz - 1) = 0
+    # we now find the starting point by finding the intersection of the lines
+    # p1 + (v1-w) t and p2 + (v2-w) t
 
-# if we throw the rock in direction (da,db,dc) from point (a,b,c)
-# then at time t >= 0 it's at (a,b,c+t)
-# so we need that all other rocks have a positive t-solution to
-# (dx - da) t + (x-a) = 0
-# (dy - db) t + (y-b) = 0
-# (dz - dc) t + (z-c) = 0
-#
-# this means that the determinant of each of the matrices is zero
-# 
+    w1 = minus(v1,w)
+    w2 = minus(v2,w)
+    p = intersect(p1,w1,p2,w2)
 
+    print(p.x+p.y+p.z)
+
+if __name__ == "__main__":
+    main()
