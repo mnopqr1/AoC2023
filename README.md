@@ -175,14 +175,21 @@ Focus on the first and second stone.
 Imagine you can throw from some place **p** with velocity **w** and hit both of these stones.
 That means there are some moments in time **t1** and **t2** where you hit stone 1 and 2, respectively.
 This gives equations 
+
 **p** + t1**w** = p1 + t1 v1
+
 **p** + t2**w** = p2 + t2 v2
+
 Bringing the **w** terms over to the other side, both are equal to **p**, so that
+
 p1 + t1 (v1 - **w**) = p2 + t2 (v2 - **w**)
+
 For **w** to satisfy such a linear equation, it must lie in a certain plane specified by p1, p2, v1, v2.
 You can compute precisely which plane using some cross product magic.
 Now do that for the first and third stone and second and third stone as well. 
 This gives three planes, which you can intersect with each other using again some cross product magic.
 Finally, to find the starting position **p** you solve the equation
+
 p1 + t1 (v1 - **w**) = p2 + t2 (v2 - **w**)
+
 which is possible now since you know p1, v1, p2, v2, and also **w**.
