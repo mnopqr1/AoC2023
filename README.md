@@ -155,3 +155,34 @@ This took me a few hours.
 Nothing super hard, it was just complicated to keep track of all the different moving parts,
 and hard to debug because of the 3D.
 I first implemented bricks as tuples and the grid as a global variable, but then decided to be a bit more structured and make use of classes and objects which I think was helpful.
+
+## Day 24 (on day 28)
+I solved part 1 on the 24th itself and then sat on my family's couch thinking about part 2 for a looong time. I eventually looked on reddit and also saw athat the solutions separate largely into two groups, sat-solving or linear algebra.
+since linear algebra is an old love of mine, I thought this afternoon I should try to understand that solution and I did, but only by a very close reading of [one particularly elegant-looking Reddit solution](https://www.reddit.com/r/adventofcode/comments/18pnycy/comment/kersplf/) which I essentially just re-implemented once I felt like I more or less understood it. Will write some details about my understanding below.
+
+Here is my understanding of [that solution on Reddit](https://www.reddit.com/r/adventofcode/comments/18pnycy/comment/kersplf/).
+
+We only use the first three stones to find the velocity and position from where we want to throw.
+The trajectory of each of these stones is specified by two 3d-vectors, (p1,v1), (p2,v2), (p3,v3)
+The key idea is that the velocity vector that we're looking for (I call it **w**) needs to be a vector in three different planes.
+But there is only one such vector! 
+That gives the velocity and then the starting position you need to throw from (I call it **p**) will be deduced from that.
+
+Now, how do you find these three planes? 
+They come from comparing the three pairs of stones: (1,2), (1,3), and (2,3).
+Each comparison will give you a plane.
+Focus on the first and second stone. 
+Imagine you can throw from some place **p** with velocity **w** and hit both of these stones.
+That means there are some moments in time **t1** and **t2** where you hit stone 1 and 2, respectively.
+This gives equations 
+**p** + t1**w** = p1 + t1 v1
+**p** + t2**w** = p2 + t2 v2
+Bringing the **w** terms over to the other side, both are equal to **p**, so that
+p1 + t1 (v1 - **w**) = p2 + t2 (v2 - **w**)
+For **w** to satisfy such a linear equation, it must lie in a certain plane specified by p1, p2, v1, v2.
+You can compute precisely which plane using some cross product magic.
+Now do that for the first and third stone and second and third stone as well. 
+This gives three planes, which you can intersect with each other using again some cross product magic.
+Finally, to find the starting position **p** you solve the equation
+p1 + t1 (v1 - **w**) = p2 + t2 (v2 - **w**)
+which is possible now since you know p1, v1, p2, v2, and also **w**.
