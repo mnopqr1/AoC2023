@@ -197,5 +197,15 @@ which is possible now since you know p1, v1, p2, v2, and also **w**.
 ## Day 23 (on Day 30)
 
 A depth-first search with (for part 2) a condensed graph, because only the branch points matter.
-With `pypy3` this takes 46 seconds on my machine to run so optimizations are probably possible,
-but at this point I'm happy to just take a star... Two to go...
+With `pypy3` this takes 46 seconds on my machine to run (and cPython takes 3m 23s), 
+so optimizations are probably possible, but at this point I'm happy to just take a star... 
+Two to go...
+
+## Day 21 (on Day 30)
+
+I got fed up with all my attempts and found a solution that says you can just compute a few
+"big steps" of size 131, and then use quadratic interpolation. Not entirely sure why this works...
+
+## Day 25 (on Day 30)
+
+The very last part of day 25... wasn't there! Done!

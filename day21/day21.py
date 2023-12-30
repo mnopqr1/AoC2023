@@ -1,6 +1,4 @@
-from functools import cache
 from itertools import product
-import os
 
 filename = "input.txt"
 with open(filename) as f:
