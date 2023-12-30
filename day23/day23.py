@@ -79,6 +79,6 @@ ex = H-1
 ey = ls[H-1].find(".")
 
 answer = longest([(sx,sy)])
-# if part1:
-    # assert answer == 2438
+if part1:
+    assert answer == 2438
 print(answer)

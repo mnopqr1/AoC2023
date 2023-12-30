@@ -193,3 +193,9 @@ Finally, to find the starting position **p** you solve the equation
 p1 + t1 (v1 - **w**) = p2 + t2 (v2 - **w**)
 
 which is possible now since you know p1, v1, p2, v2, and also **w**.
+
+## Day 23 (on Day 30)
+
+A depth-first search with (for part 2) a condensed graph, because only the branch points matter.
+With `pypy3` this takes 46 seconds on my machine to run so optimizations are probably possible,
+but at this point I'm happy to just take a star... Two to go...

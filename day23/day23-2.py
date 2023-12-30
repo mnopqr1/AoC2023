@@ -1,6 +1,6 @@
 from itertools import product
 
-filename = "test.txt"
+filename = "input.txt"
 with open(filename) as f:
     ls = [l.rstrip() for l in f.readlines()]
 
@@ -22,70 +22,64 @@ for (x,y) in product(range(H),range(W)):
             if grid[(nx,ny)] != "#":
                 neighbors[(x,y)].append((nx,ny))
 
+mem = {"best" : 0}
 
-def show(c,h):
-    cx,cy = c
-    for (x,y) in product(range(H),range(W)):
-        if (x,y) in h:
-            print("X", end="")
-        elif (x,y) == (cx,cy):
-            print("!", end="")
+def longest(h):
+    cur, _ = h[-1]
+    poss = [n for n in cgrid[cur] if n not in [x[0] for x in h]]
+    
+    while len(poss) == 1:
+        prev, cur = cur, poss[0]
+        h.append((cur, cgrid[prev][cur]))
+        poss = [n for n in cgrid[cur] if n not in [x[0] for x in h]]
+
+    if len(poss) == 0:
+        if cur == (ex,ey):
+            # print("reached end!")
+            score = sum(x[1] for x in h)
+            # print(score)
+            return score
         else:
-            print(grid[(x,y)], end="")
-        if y == W-1:
-            print()
+            return 0
 
+    bestr = 0
 
+    for n in poss:
+        histvar = h + [(n,cgrid[cur][n])]
+        possr = longest(histvar)
+        if possr > bestr:
+            bestr = possr
+
+    if bestr > mem["best"]:
+        mem["best"] = bestr
+        print(bestr)
+    return bestr
 
 sx = 0
 sy = ls[0].find(".")
 ex = H-1
 ey = ls[H-1].find(".")
 
-
-# can_reach_end = {(ex,ey)}
-# done = False
-# queue = [(ex,ey)]
-# while len(queue) > 0:
-#     n = queue.pop(0)
-#     for p in neighbors[n]:
-#         if p not in can_reach_end:
-#             queue.append(p)
-#             can_reach_end.add(p)
-
-# print(len(can_reach_end)) # 9406
-# #how many have more than 2 neighbors? 34
-# print(len([(x,y) for (x,y) in can_reach_end if len(neighbors[(x,y)]) > 2]))
-
-# walk backwards from end, every time I see a node that has more than two
-# neighbors, record length of best path
-
-longest_to_end = {(ex,ey) : 0}
-crucial = []
-queue = [(ex-1,ey)]
-prev = (ex,ey)
+cgrid = dict()
+queue = [(sx,sy)]
+seen = {(sx,sy)}
 while len(queue) > 0:
-    n = queue.pop(0)
-    if n == (sx,sy):
-        longest_to_end[n] = longest_to_end[(sx+1,sy)] + 1
-        break
-    while len(neighbors[n]) == 2:
-        p, q = neighbors[n]
-        if p in longest_to_end:
-            q,p = p,q
-        longest_to_end[n] = longest_to_end[q] + 1
-        prev = n
-        n = p
-    longest_to_end[n] = longest_to_end[prev] + 1
-    crucial.append(n)
-    queue += neighbors[n]
-    print(longest_to_end)
-    print(queue)
-    show(n,longest_to_end.keys())
-    input()
+    branch = queue.pop(0)
+    if branch in cgrid:
+        continue
+    cgrid[branch] = dict()
+    for st in neighbors[branch]:
+        ct = 1
+        prev = branch
+        cur = st
+        while len(neighbors[cur]) == 2:
+            a,b = neighbors[cur]
+            assert a == prev or b == prev
+            if b == prev:
+                a,b = b,a
+            prev, cur = cur, b
+            ct += 1
+        cgrid[branch][cur] = ct
+        queue.append(cur)
 
-# print(longest_to_end[(sx,sy)])
-# answer = longest()
-# if part1:
-    # assert answer == 2438
-# print(answer)
+answer = longest([((sx,sy),0)])
